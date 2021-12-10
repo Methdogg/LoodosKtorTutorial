@@ -1,6 +1,7 @@
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
+val exposed_sql_version: String by project
 
 plugins {
     application
@@ -23,6 +24,11 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+
+    implementation("org.jetbrains.exposed:exposed-core:$exposed_sql_version")
+    runtimeOnly("org.jetbrains.exposed:exposed-jdbc:$exposed_sql_version")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposed_sql_version")
+    implementation("org.postgresql:postgresql:42.3.1")
 
     implementation("io.ktor:ktor-jackson:$ktor_version")
 }
