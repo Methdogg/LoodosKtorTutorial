@@ -62,13 +62,23 @@ fun Application.configureRouting() {
             val userBody = call.receive<User>()
             val userInDb = UserTable.getUserByUsername(userBody.username)
 
-            val verifyResult = BCrypt.verifyer().verify(userBody.password.toCharArray(), userInDb.password.toCharArray())
+            val verifyResult =
+                BCrypt.verifyer().verify(userBody.password.toCharArray(), userInDb.password.toCharArray())
 
             if (verifyResult.verified) {
                 call.respond(hashMapOf("Token" to tokenManager.generateToken(userBody.username)))
             } else {
                 call.respond(status = HttpStatusCode.Unauthorized, "Login failed!")
             }
+        }
+
+        intercept(ApplicationCallPipeline.Features) {
+            val authHeader = call.request.headers["Authorization"]
+            if (authHeader.isNullOrEmpty()) {
+                call.respondText { "This is interceptor" }
+            }
+
+            return@intercept finish()
         }
     }
 }
