@@ -2,11 +2,13 @@ package com.emirhanemmez.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.emirhanemmez.error.exceptions.AuthenticationException
 import com.typesafe.config.ConfigFactory
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.config.*
+import io.ktor.features.*
 
 fun Application.configureAuthentication() {
     authentication {
@@ -31,6 +33,16 @@ fun Application.configureAuthentication() {
                 } else {
                     null
                 }
+            }
+
+            challenge { _, _ ->
+                call.request.headers["Authorization"]?.let {
+                    if (it.isNotEmpty()) {
+                        throw AuthenticationException("Token expired!")
+                    } else {
+                        throw BadRequestException("Authorization header can not be blank!")
+                    }
+                } ?: throw BadRequestException("Authorization header can not be blank!")
             }
         }
     }
