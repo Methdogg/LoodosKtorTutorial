@@ -3,7 +3,9 @@ package com.emirhanemmez.plugins
 import at.favre.lib.crypto.bcrypt.BCrypt
 import com.emirhanemmez.db.data.User
 import com.emirhanemmez.db.table.UserTable
+import com.emirhanemmez.utils.TokenManager
 import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -16,8 +18,10 @@ fun Application.configureRouting() {
         }
 
         route("/user") {
-            get {
-                call.respond(UserTable.getUserList())
+            authenticate {
+                get {
+                    call.respond(UserTable.getUserList())
+                }
             }
 
             get("/{index}") {
@@ -52,6 +56,8 @@ fun Application.configureRouting() {
             }
         }
 
+        val tokenManager = TokenManager()
+
         post("/login") {
             val userBody = call.receive<User>()
             val userInDb = UserTable.getUserByUsername(userBody.username)
@@ -59,7 +65,7 @@ fun Application.configureRouting() {
             val verifyResult = BCrypt.verifyer().verify(userBody.password.toCharArray(), userInDb.password.toCharArray())
 
             if (verifyResult.verified) {
-                call.respondText { "Login successful!" }
+                call.respond(hashMapOf("Token" to tokenManager.generateToken(userBody.username)))
             } else {
                 call.respond(status = HttpStatusCode.Unauthorized, "Login failed!")
             }
