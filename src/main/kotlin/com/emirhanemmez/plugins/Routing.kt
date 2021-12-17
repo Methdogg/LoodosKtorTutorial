@@ -1,8 +1,10 @@
 package com.emirhanemmez.plugins
 
+import at.favre.lib.crypto.bcrypt.BCrypt
 import com.emirhanemmez.db.data.User
 import com.emirhanemmez.db.table.UserTable
 import io.ktor.application.*
+import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -27,6 +29,7 @@ fun Application.configureRouting() {
 
             post {
                 val userBody = call.receive<User>()
+                userBody.password = userBody.hashedPassword()
                 UserTable.addUser(userBody)
                 call.respondText("User successfully created!")
             }
@@ -46,6 +49,19 @@ fun Application.configureRouting() {
                     UserTable.deleteUser(it)
                     call.respondText { "Successfully deleted" }
                 }
+            }
+        }
+
+        post("/login") {
+            val userBody = call.receive<User>()
+            val userInDb = UserTable.getUserByUsername(userBody.username)
+
+            val verifyResult = BCrypt.verifyer().verify(userBody.password.toCharArray(), userInDb.password.toCharArray())
+
+            if (verifyResult.verified) {
+                call.respondText { "Login successful!" }
+            } else {
+                call.respond(status = HttpStatusCode.Unauthorized, "Login failed!")
             }
         }
     }

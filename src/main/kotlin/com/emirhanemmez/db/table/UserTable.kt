@@ -39,6 +39,14 @@ object UserTable : Table("user") {
         }.first()
     }
 
+    fun getUserByUsername(username: String): User = transaction {
+        UserTable.select {
+            this@UserTable.username eq username
+        }.map {
+            it.toUser()
+        }.first()
+    }
+
     fun updateUser(id: Int, user: User) = transaction {
         UserTable.update({
             this@UserTable.id eq id

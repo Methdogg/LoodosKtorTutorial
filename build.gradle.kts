@@ -31,4 +31,6 @@ dependencies {
     implementation("org.postgresql:postgresql:42.3.1")
 
     implementation("io.ktor:ktor-jackson:$ktor_version")
+
+    implementation("at.favre.lib:bcrypt:0.9.0")
 }
