@@ -36,4 +36,6 @@ dependencies {
     implementation("at.favre.lib:bcrypt:0.9.0")
 
     implementation("io.ktor:ktor-auth-jwt:$ktor_version")
+
+    implementation("io.insert-koin:koin-ktor:3.1.4")
 }

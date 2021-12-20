@@ -10,6 +10,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import org.koin.ktor.ext.inject
 
 fun Application.configureRouting() {
     routing {
@@ -56,11 +57,11 @@ fun Application.configureRouting() {
             }
         }
 
-        val tokenManager = TokenManager()
-
         post("/login") {
             val userBody = call.receive<User>()
             val userInDb = UserTable.getUserByUsername(userBody.username)
+
+            val tokenManager by call.application.inject<TokenManager>()
 
             val verifyResult =
                 BCrypt.verifyer().verify(userBody.password.toCharArray(), userInDb.password.toCharArray())
@@ -70,15 +71,6 @@ fun Application.configureRouting() {
             } else {
                 call.respond(status = HttpStatusCode.Unauthorized, "Login failed!")
             }
-        }
-
-        intercept(ApplicationCallPipeline.Features) {
-            val authHeader = call.request.headers["Authorization"]
-            if (authHeader.isNullOrEmpty()) {
-                call.respondText { "This is interceptor" }
-            }
-
-            return@intercept finish()
         }
     }
 }
