@@ -22,7 +22,6 @@ dependencies {
     implementation("io.ktor:ktor-server-core:$ktor_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("io.ktor:ktor-auth:1.6.6")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 
@@ -38,4 +37,6 @@ dependencies {
     implementation("io.ktor:ktor-auth-jwt:$ktor_version")
 
     implementation("io.insert-koin:koin-ktor:3.1.4")
+
+    implementation("io.ktor:ktor-network-tls-certificates:$ktor_version")
 }
