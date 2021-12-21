@@ -4,6 +4,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt
 import com.emirhanemmez.db.data.User
 import com.emirhanemmez.db.table.UserTable
 import com.emirhanemmez.utils.TokenManager
+import com.papsign.ktor.openapigen.openAPIGen
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
@@ -14,10 +15,6 @@ import org.koin.ktor.ext.inject
 
 fun Application.configureRouting() {
     routing {
-        get("/") {
-            call.respondText("Hello world")
-        }
-
         route("/user") {
             authenticate {
                 get {
@@ -71,6 +68,13 @@ fun Application.configureRouting() {
             } else {
                 call.respond(status = HttpStatusCode.Unauthorized, "Login failed!")
             }
+        }
+
+        get("/openapi.json") {
+            call.respond(application.openAPIGen.api.serialize())
+        }
+        get("/") {
+            call.respondRedirect("/swagger-ui/index.html?url=/openapi.json", true)
         }
     }
 }

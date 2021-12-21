@@ -16,6 +16,9 @@ application {
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://jitpack.io")
+    }
 }
 
 dependencies {
@@ -39,4 +42,6 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:3.1.4")
 
     implementation("io.ktor:ktor-network-tls-certificates:$ktor_version")
+
+    implementation("com.github.papsign:Ktor-OpenAPI-Generator:0.3-beta.2")
 }

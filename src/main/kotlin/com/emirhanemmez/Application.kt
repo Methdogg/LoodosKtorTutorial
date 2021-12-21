@@ -54,4 +54,5 @@ fun Application.module() {
     configureSerialization()
     configureDatabase()
     configureErrorHandling()
+    configureOpenApi()
 }
